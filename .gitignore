@@ -1,1 +1,11 @@
 goproject.sql
+
+node_modules/
+dist/
+build/
+.next/
+out/
+.env
+.env.local
+bin/
+*.exe
