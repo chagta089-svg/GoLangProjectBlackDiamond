@@ -1,0 +1,106 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ตะกร้าสินค้า - BLACK DIAMOND</title>
+    <link rel="stylesheet" type="text/css" href="/static/css/cart.css">
+</head>
+<body>
+    <header>
+        <div class="header-container">
+            <a class="logo">BLACK<span>DIAMOND</span></a>
+            <nav>
+                <ul>
+                    <li><a href="/?username={{.Username}}">หน้าหลัก</a></li>
+                    <li><a href="/cart?username={{.Username}}">ตะกร้าสินค้า</a></li>
+                    <li><a href="/orders?username={{.Username}}">ออเดอร์ของฉัน</a></li>
+                </ul>
+            </nav>
+            <div class="auth-buttons">
+                {{if .Username}}
+                    <a href="/logout" class="btn btn-login">ออกจากระบบ</a>
+                {{else}}
+                    <a href="/Login" class="btn btn-login">เข้าสู่ระบบ</a>
+                    <a href="/register" class="btn btn-register">สมัครสมาชิก</a>
+                {{end}}
+            </div>
+        </div>
+    </header>
+
+    <div class="cart-container">
+        <div class="cart-header">
+            <h1>ตะกร้าสินค้า</h1>
+            <p>ตรวจสอบและจัดการสินค้าในตะกร้าของคุณ</p>
+        </div>
+
+        {{if .Message}}
+        <div class="message {{.MessageType}}">
+            {{.Message}}
+        </div>
+        {{end}}
+
+        {{if .CartItems}}
+        <div class="cart-items">
+            {{range .CartItems}}
+            <div class="cart-item">
+                <img src="/static/images/{{.Name}}.jpg" alt="{{.Name}}" class="item-image">
+                <div class="item-details">
+                    <div class="item-name">{{.Name}}</div>
+                    <div class="item-material">{{.Material}}</div>
+                    <div class="item-price">{{.Price}} ฿</div>
+                    <form method="POST" action="/updateCartItem" class="quantity-form">
+                        <input type="hidden" name="jewelry_id" value="{{.JewelryID}}">
+                        <input type="hidden" name="username" value="{{$.Username}}">
+                        <label>จำนวน:</label>
+                        <input type="number" name="quantity" class="quantity-input" value="{{.Quantity}}" min="1" max="{{.Stock}}">
+                        <button type="submit" class="update-btn">อัพเดท</button>
+                        <span class="stock-info">มีในสต็อก: {{.Stock}} ชิ้น</span>
+                    </form>
+                </div>
+                <form method="POST" action="/removeFromCart" class="remove-form">
+                    <input type="hidden" name="jewelry_id" value="{{.JewelryID}}">
+                    <input type="hidden" name="username" value="{{$.Username}}">
+                    <button type="submit" class="remove-btn" onclick="return confirm('คุณต้องการลบสินค้านี้ออกจากตะกร้าหรือไม่?')">ลบออก</button>
+                </form>
+            </div>
+            {{end}}
+        </div>
+
+        <div class="cart-summary">
+            <div class="summary-title">สรุปคำสั่งซื้อ</div>
+            <div class="summary-row">
+                <span>จำนวนสินค้า:</span>
+                <span>{{.TotalItems}} ชิ้น</span>
+            </div>
+            <div class="summary-row">
+                <span>ค่าสินค้า:</span>
+                <span>{{.Subtotal}} ฿</span>
+            </div>
+            <div class="summary-row">
+                <span>ค่าจัดส่ง:</span>
+                <span>ฟรี</span>
+            </div>
+            <div class="summary-row summary-total">
+                <span>รวมทั้งสิ้น:</span>
+                <span>{{.Total}} ฿</span>
+            </div>
+            <form method="POST" action="/checkout">
+                <input type="hidden" name="username" value="{{.Username}}">
+                <button type="submit" class="checkout-btn" onclick="return confirm('ยืนยันการสั่งซื้อ?')">ดำเนินการชำระเงิน</button>
+            </form>
+            <a href="/?username={{.Username}}" class="continue-shopping">← ช็อปปิ้งต่อ</a>
+        </div>
+        {{else}}
+        <div class="cart-items">
+            <div class="empty-cart">
+                <div class="empty-cart-icon">🛒</div>
+                <h3>ตะกร้าสินค้าของคุณว่างเปล่า</h3>
+                <p>เพิ่มสินค้าลงในตะกร้าเพื่อเริ่มช็อปปิ้ง</p>
+                <a href="/?username={{.Username}}" class="checkout-btn">เริ่มช็อปปิ้ง</a>
+            </div>
+        </div>
+        {{end}}
+    </div>
+</body>
+</html>

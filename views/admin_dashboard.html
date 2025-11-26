@@ -1,0 +1,198 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Admin Dashboard - BLACK DIAMOND</title>
+    <link rel="stylesheet" type="text/css" href="/static/css/dashboard.css">
+</head>
+<body>
+    <header class="admin-header">
+        <div class="header-container">
+            <a href="/admin?username={{.Username}}" class="logo">ADMIN<span>PANEL</span></a>
+            <div class="auth-buttons">
+                <a href="/logout" class="btn btn-login">ออกจากระบบ</a>
+            </div>
+        </div>
+    </header>
+
+    <div class="dashboard-container">
+        <div class="dashboard-header">
+            <h1>Admin Dashboard</h1>
+            <p>จัดการระบบร้านค้าเครื่องประดับ BLACK DIAMOND</p>
+        </div>
+
+        {{if .Message}}
+        <div class="message {{.MessageType}}">
+            {{.Message}}
+        </div>
+        {{end}}
+
+        <div class="admin-section">
+            <h2 class="section-title">ค้นหาข้อมูลลูกค้าและประวัติการสั่งซื้อ</h2>
+            
+            <div class="search-box">
+                <form method="GET" action="/admin" class="search-form">
+                    <input type="hidden" name="username" value="{{.Username}}">
+                    
+                    <div class="form-group">
+                        <label>ค้นหาด้วยชื่อผู้ใช้หรืออีเมล</label>
+                        <input type="text" name="search_customer" value="{{.SearchCustomer}}" 
+                               placeholder="ชื่อผู้ใช้, อีเมล, ชื่อ-สกุล" class="search-input">
+                    </div>
+                    
+                    <div class="form-group">
+                        <label>รหัสออเดอร์</label>
+                        <input type="text" name="search_order" value="{{.SearchOrder}}" 
+                               placeholder="รหัสออเดอร์" class="search-input">
+                    </div>
+                    
+                    <div class="form-group">
+                        <label>สถานะออเดอร์</label>
+                        <select name="order_status" class="search-select">
+                            <option value="">ทั้งหมด</option>
+                            <option value="pending" {{if eq .OrderStatus "pending"}}selected{{end}}>รอดำเนินการ</option>
+                            <option value="completed" {{if eq .OrderStatus "completed"}}selected{{end}}>สำเร็จ</option>
+                            <option value="cancelled" {{if eq .OrderStatus "cancelled"}}selected{{end}}>ยกเลิก</option>
+                        </select>
+                    </div>
+                    
+                    <button type="submit" class="search-btn">ค้นหา</button>
+                    <a href="/admin?username={{.Username}}" class="search-btn" style="background: #666; text-decoration: none;">ล้าง</a>
+                </form>
+            </div>
+
+            {{if .OrderResults}}
+            <div style="overflow-x: auto;">
+                <table class="data-table">
+                    <thead>
+                        <tr>
+                            <th>รหัสออเดอร์</th>
+                            <th>ลูกค้า</th>
+                            <th>อีเมล</th>
+                            <th>สินค้า</th>
+                            <th>จำนวน</th>
+                            <th>ราคาต่อชิ้น</th>
+                            <th>รวม</th>
+                            <th>วันที่สั่ง</th>
+                            <th>สถานะ</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {{range .OrderResults}}
+                        <tr>
+                            <td><strong>{{.OrderID}}</strong></td>
+                            <td>
+                                <div>{{.CustomerName}}</div>
+                                <div style="font-size: 0.8rem; color: #888;">@{{.Username}}</div>
+                            </td>
+                            <td>{{.Email}}</td>
+                            <td>
+                                <div><strong>{{.ProductName}}</strong></div>
+                                <div style="font-size: 0.8rem; color: #888;">รหัส: {{.JewelryID}}</div>
+                            </td>
+                            <td>{{.Quantity}} ชิ้น</td>
+                            <td>{{.Price}} ฿</td>
+                            <td><strong>{{.Total}} ฿</strong></td>
+                            <td>{{.OrderDate}}</td>
+                            <td>
+                                <span class="order-status status-{{.Status}}">
+                                    {{if eq .Status "pending"}}รอดำเนินการ{{end}}
+                                    {{if eq .Status "completed"}}สำเร็จ{{end}}
+                                    {{if eq .Status "cancelled"}}ยกเลิก{{end}}
+                                </span>
+                            </td>
+                        </tr>
+                        {{end}}
+                    </tbody>
+                </table>
+            </div>
+            {{else}}
+                {{if .HasSearch}}
+                <div class="no-data">ไม่พบข้อมูลการสั่งซื้อที่ค้นหา</div>
+                {{end}}
+            {{end}}
+        </div>
+
+        <div class="admin-section">
+            <h2 class="section-title">จัดการสินค้า - แก้ไขจำนวนสต็อก</h2>
+            <div style="overflow-x: auto;">
+                <table class="data-table">
+                    <thead>
+                        <tr>
+                            <th>รหัสสินค้า</th>
+                            <th>ชื่อสินค้า</th>
+                            <th>ประเภท</th>
+                            <th>ราคา</th>
+                            <th>จำนวนในสต็อก</th>
+                            <th>การจัดการ</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {{range .Products}}
+                        <tr>
+                            <td>{{.ID}}</td>
+                            <td>{{.Name}}</td>
+                            <td>{{.TypeName}}</td>
+                            <td>{{.Price}} ฿</td>
+                            <td>{{.Stock}} ชิ้น</td>
+                            <td>
+                                <form method="POST" action="/admin/updateStock" style="display: flex; gap: 10px; align-items: center;">
+                                    <input type="hidden" name="username" value="{{$.Username}}">
+                                    <input type="hidden" name="jewelry_id" value="{{.ID}}">
+                                    <input type="number" name="stock" value="{{.Stock}}" class="stock-input" min="0">
+                                    <button type="submit" class="update-btn">อัพเดท</button>
+                                </form>
+                            </td>
+                        </tr>
+                        {{end}}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+
+        <div class="admin-section">
+            <h2 class="section-title">จัดการผู้ใช้ - แก้ไขบทบาท</h2>
+            <div style="overflow-x: auto;">
+                <table class="data-table">
+                    <thead>
+                        <tr>
+                            <th>ชื่อผู้ใช้</th>
+                            <th>ชื่อ-สกุล</th>
+                            <th>อีเมล</th>
+                            <th>บทบาทปัจจุบัน</th>
+                            <th>การจัดการ</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {{range .Users}}
+                        <tr>
+                            <td>{{.Username}}</td>
+                            <td>{{.Fullname}}</td>
+                            <td>{{.Email}}</td>
+                            <td>
+                                {{if eq .Role "user"}}User{{end}}
+                                {{if eq .Role "admin"}}Admin{{end}}
+                            </td>
+                            <td>
+                                <form method="POST" action="/admin/updateUserRole" style="display: flex; gap: 10px; align-items: center;">
+                                    <input type="hidden" name="username" value="{{$.Username}}">
+                                    <input type="hidden" name="target_username" value="{{.Username}}">
+                                    <select name="role" class="role-select">
+                                        <option value="user" {{if eq .Role "user"}}selected{{end}}>User</option>
+                                        <option value="admin" {{if eq .Role "admin"}}selected{{end}}>Admin</option>
+                                    </select>
+                                    <button type="submit" class="update-btn">เปลี่ยน</button>
+                                </form>
+                            </td>
+                        </tr>
+                        {{end}}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+
+        <a href="/?username={{.Username}}" class="back-link">← กลับไปหน้าร้านค้า</a>
+    </div>
+</body>
+</html>

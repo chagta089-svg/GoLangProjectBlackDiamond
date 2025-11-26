@@ -1,0 +1,75 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>BLACK DIAMOND | รายการสินค้า</title>
+    <link rel="stylesheet" type="text/css" href="/static/css/productlist.css">
+</head>
+<body>
+    <header>
+        <div class="header-container">
+            <a href="/{{if .Username}}?username={{.Username}}{{end}}" class="logo">
+                BLACK<span>DIAMOND</span>
+            </a>
+            <div class="top-buttons">
+                <a href="/{{if .Username}}?username={{.Username}}{{end}}" class="btn-back">
+                    ← กลับหน้าหลัก
+                </a>
+                {{if .Username}}
+                    <span class="user-info">{{.Username}}</span>
+                    <a href="/logout" class="btn-logout">ออกจากระบบ</a>
+                {{else}}
+                    <a href="/Login" class="btn-login">เข้าสู่ระบบ</a>
+                {{end}}
+            </div>
+        </div>
+    </header>
+
+    <div class="container">
+        <h1 class="page-title">รายการสินค้า</h1>
+        <p class="page-subtitle">เครื่องประดับคุณภาพพรีเมียมจากแบรนด์ BLACK DIAMOND</p>
+        
+        <div class="products">
+            {{range .Products}}
+            <div class="product">
+
+                <div class="product-image"><img src="/static/images/{{.Name}}.jpg" alt="product"></div>
+
+                <div class="product-content">
+                    <h3>{{.Name}}</h3>
+                    <div class="product-info">
+                        <div class="product-price">ราคา {{.Price}} ฿</div>
+                        <div class="product-stock">จำนวนคงเหลือ : {{.Stock}}</div>
+                        <div class="product-type">ประเภท: {{.Type}}</div>
+                    </div>
+                    <div class="product-actions">
+                        <form method="POST" action="/addToCart" class="product-actions">
+                            <input type="hidden" name="jewelry_id" value="{{.ID}}">
+                            <input type="hidden" name="username" value="{{$.Username}}">
+                            <input type="number" name="quantity" value="1" min="1" max="{{.Stock}}" style="width: 60px; margin-right: 10px;">
+                            <button type="submit" class="btn-cart">เพิ่มในตะกร้า 🛒</button>
+                        </form>
+                        
+                    </div>
+                </div>
+            </div>
+            {{else}}
+            <div class="empty-state" style="grid-column: 1 / -1;">
+                <div class="empty-state-icon">📦</div>
+                <h2>ไม่พบสินค้า</h2>
+                <p>ขออภัย ไม่มีสินค้าในหมวดหมู่นี้ในขณะนี้</p>
+            </div>
+            {{end}}
+        </div>
+    </div>
+
+    <footer>
+        <div class="footer-content">
+            <div class="copyright">
+                <p>&copy; 2023 BLACK DIAMOND JEWELRY. All rights reserved.</p>
+            </div>
+        </div>
+    </footer>
+</body>
+</html>

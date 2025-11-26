@@ -1,0 +1,112 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>BLACK DIAMOND | เครื่องประดับระดับพรีเมียม</title>
+    <link rel="stylesheet" type="text/css" href="/static/css/index.css">
+
+</head>
+<body>
+    <header>
+        <div class="header-container">
+            <div class="logo">BLACK<span>DIAMOND</span></div>
+            <nav>
+                <ul>
+                    <li><a href="/?username={{.Username}}">หน้าหลัก</a></li>
+                    <li><a href="/cart?username={{.Username}}">ตะกร้าสินค้า</a></li>
+                    <li><a href="/cart?username={{.Username}}">ตะกร้าสินค้า</a></li>
+                </ul>
+            </nav>
+            <div class="auth-buttons">
+                {{if .Username}}
+                    <a href="/logout" class="btn btn-login">ออกจากระบบ</a>
+                {{else}}
+                    <a href="/Login" class="btn btn-login">เข้าสู่ระบบ</a>
+                    <a href="/register" class="btn btn-register">สมัครสมาชิก</a>
+                {{end}}
+            </div>
+        </div>
+    </header>
+
+    <section class="search-section">
+        <div class="search-container">
+
+            {{if .Username}}
+            <section class="user-welcome-section">
+                <div class="welcome-container">
+                    {{$isAdmin := false}}
+                    {{if eq .Role "admin"}}
+                        {{$isAdmin = true}}
+                        <div class="welcome-message">ยินดีต้อนรับ Admin {{.Username}}</div>
+                    {{else}}
+                        <div class="welcome-message">ยินดีต้อนรับ {{.Username}}</div>
+                    {{end}}
+                    
+                    <div class="user-actions">
+                        <a href="/orders?username={{.Username}}" class="user-btn btn-orders">ประวัติการสั่งซื้อ</a>
+                        {{if $isAdmin}}
+                        <a href="/admin?username={{.Username}}" class="user-btn btn-profile">จัดการระบบ</a>
+                        {{end}}
+                    </div>
+                </div>
+            </section>
+        {{end}}
+        </div>
+    </section>
+
+    <div class="container">
+        <h2 class="section-title">ประเภทเครื่องประดับ</h2>
+        
+        <div class="category-container">
+            {{range .Types}}
+            <div class="category-card">
+                <a href="/listProduct?typeid={{.TypeID}}{{if $.Username}}&username={{$.Username}}{{end}}">
+                    <img src="/static/images/{{.TypeID}}.png" alt="{{.TypeName}}" class="category-img">
+                </a>
+                <div class="category-name">{{.TypeName}}</div>
+            </div>
+            {{end}}
+        </div>
+    </div>
+
+    <footer>
+        <div class="footer-container">
+            <div class="footer-col">
+                <h3>เกี่ยวกับเรา</h3>
+                <p>BLACK DIAMOND คือแบรนด์เครื่องประดับระดับพรีเมียมที่มุ่งมั่นนำเสนอผลงานการออกแบบที่สมบูรณ์แบบ ด้วยความพิถีพิถันในทุกรายละเอียด</p>
+            </div>
+            <div class="footer-col">
+                <h3>บริการของเรา</h3>
+                <ul>
+                    <li><a >ออกแบบพิเศษตามสั่ง</a></li>
+                    <li><a >บริการซ่อมแซมและดูแล</a></li>
+                    <li><a >ประเมินมูลค่าเครื่องประดับ</a></li>
+                    <li><a >ให้คำปรึกษาด้านการออกแบบ</a></li>
+                </ul>
+            </div>
+            <div class="footer-col">
+                <h3>ข้อมูลสำคัญ</h3>
+                <ul>
+                    <li><a>นโยบายความเป็นส่วนตัว</a></li>
+                    <li><a>ข้อกำหนดและเงื่อนไข</a></li>
+                    <li><a>นโยบายการคืนสินค้า</a></li>
+                    <li><a>คำถามที่พบบ่อย</a></li>
+                </ul>
+            </div>
+            <div class="footer-col">
+                <h3>ติดต่อเรา</h3>
+                <ul>
+                    <li>โทร: 02-123-4567</li>
+                    <li>อีเมล: contact@blackdiamond.com</li>
+                    <li>ที่อยู่: 999 อาคารพรีเมียม สีลม กรุงเทพฯ</li>
+                    <li>เวลาเปิด: 10:00 - 20:00 น.</li>
+                </ul>
+            </div>
+        </div>
+        <div class="copyright">
+            <p>&copy; 2023 BLACK DIAMOND JEWELRY. All rights reserved.</p>
+        </div>
+    </footer>
+</body>
+</html>

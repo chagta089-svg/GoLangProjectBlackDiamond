@@ -1,0 +1,91 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ประวัติการสั่งซื้อ - BLACK DIAMOND</title>
+    <link rel="stylesheet" type="text/css" href="/static/css/orders.css">
+</head>
+<body>
+    <header>
+        <div class="header-container">
+            <a class="logo">BLACK<span>DIAMOND</span></a>
+            <nav>
+                <ul>
+                    <li><a href="/?username={{.Username}}">หน้าหลัก</a></li>
+                    <li><a href="/cart?username={{.Username}}">ตะกร้าสินค้า</a></li>
+                    <li><a href="/orders?username={{.Username}}" class="active">ประวัติการสั่งซื้อ</a></li>
+                </ul>
+            </nav>
+            <div class="auth-buttons">
+                {{if .Username}}
+                    <a href="/logout" class="btn btn-login">ออกจากระบบ</a>
+                {{else}}
+                    <a href="/Login" class="btn btn-login">เข้าสู่ระบบ</a>
+                    <a href="/register" class="btn btn-register">สมัครสมาชิก</a>
+                {{end}}
+            </div>
+        </div>
+    </header>
+
+    <div class="orders-container">
+        <div class="orders-header">
+            <h1>ประวัติการสั่งซื้อ</h1>
+            <div class="orders-count">คุณมี {{.Count}} ออเดอร์</div>
+        </div>
+
+        {{if .Orders}}
+            {{range .Orders}}
+            <div class="order-card">
+                <div class="order-header">
+                    <div class="order-info">
+                        <h3>ออเดอร์ #{{.OrderID}}</h3>
+                        <div class="order-date">วันที่สั่งซื้อ: {{.OrderDate}}</div>
+                    </div>
+                    <div class="order-status status-{{.Status}}">
+                        {{if eq .Status "pending"}}รอดำเนินการ{{end}}
+                        {{if eq .Status "paid"}}ชำระเงินแล้ว{{end}}
+                        {{if eq .Status "shipped"}}กำลังจัดส่ง{{end}}
+                        {{if eq .Status "completed"}}เสร็จสิ้น{{end}}
+                        {{if eq .Status "delivered"}}จัดส่งแล้ว{{end}}
+                    </div>
+                </div>
+
+                <div class="order-items">
+                    {{range .Items}}
+                    <div class="order-item">
+                        <div class="item-info">
+                            <img src="/static/images/{{.Name}}.jpg" alt="{{.Name}}" class="item-image">
+                            <div class="item-details">
+                                <h4>{{.Name}}</h4>
+                                <p>รหัสสินค้า: {{.JewelryID}}</p>
+                            </div>
+                        </div>
+                        <div class="item-quantity">จำนวน: {{.Quantity}}</div>
+                        <div class="item-price">{{.Price}} ฿</div>
+                        <div class="item-total">{{.Total}} ฿</div>
+                    </div>
+                    {{end}}
+                </div>
+
+                <div class="order-footer">
+                    <div class="order-total">รวมทั้งสิ้น: {{.Total}} ฿</div>
+                    <div class="order-actions">
+                        {{if eq .Status "shipped"}}
+                        <a href="/tracking?order_id={{.OrderID}}&username={{$.Username}}" class="action-btn btn-track">ติดตามพัสดุ</a>
+                        {{end}}
+                    </div>
+                </div>
+            </div>
+            {{end}}
+        {{else}}
+        <div class="no-orders">
+            <div class="no-orders-icon">📦</div>
+            <h3>ยังไม่มีประวัติการสั่งซื้อ</h3>
+            <p>เริ่มช็อปปิ้งและทำการสั่งซื้อสินค้าของคุณ</p>
+            <a href="/?username={{.Username}}" class="continue-shopping">เริ่มช็อปปิ้ง</a>
+        </div>
+        {{end}}
+    </div>
+</body>
+</html>
