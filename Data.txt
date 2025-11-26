@@ -1,0 +1,106 @@
+-- user
+CREATE TABLE User(
+	username VARCHAR(100) PRIMARY KEY,
+    fullname VARCHAR(255) NOT NULL,
+    email VARCHAR(100) UNIQUE NOT NULL,
+    password VARCHAR(255) NOT NULL,
+    role VARCHAR(20) NOT NULL
+);
+
+-- ประเภท product
+CREATE TABLE type(
+    typeid varchar(10) PRIMARY KEY,
+    typename varchar(100)Not Null
+);
+-- ตาราง products
+CREATE TABLE Jewelry(
+    jewelry_id VARCHAR(10) PRIMARY KEY,
+    name VARCHAR(255) NOT NULL,
+    typeid VARCHAR(10) NOT NULL,
+    material VARCHAR(100) NOT NULL,
+    price DECIMAL(10,2) NOT NULL,
+    stock INT NOT NULL,
+    weight DECIMAL(10,2),
+    description TEXT,
+    created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
+    FOREIGN KEY (typeid) REFERENCES Type(typeid)
+);
+
+-- ตารางคำสั่งซื้อ
+CREATE TABLE Orders(
+    order_id VARCHAR(10) PRIMARY KEY,
+    username VARCHAR(100) NOT NULL, 
+    order_date DATETIME DEFAULT CURRENT_TIMESTAMP,
+    status VARCHAR(50) NOT NULL, 
+    FOREIGN KEY (username) REFERENCES User(username)
+);
+
+-- ตารางรายละเอียดคำสั่งซื้อ
+CREATE TABLE OrderDetail(
+    order_id VARCHAR(10),
+    jewelry_id VARCHAR(10),
+    quantity INT NOT NULL,
+    price DECIMAL(10,2) NOT NULL,
+    PRIMARY KEY (order_id, jewelry_id),
+    FOREIGN KEY (order_id) REFERENCES Orders(order_id),
+    FOREIGN KEY (jewelry_id) REFERENCES Jewelry(jewelry_id)
+);
+
+
+insert into type (typeid ,typename) values('1001','Ring');
+insert into type (typeid ,typename) values('1002','Necklace');
+insert into type (typeid ,typename) values('1003','Bracelet');
+insert into type (typeid ,typename) values('1004','Earrings');
+insert into type (typeid ,typename) values('1005','Brooch / Pin');
+insert into type (typeid ,typename) values('1006','Watch / Wristwatch');
+
+
+insert into user (username,fullname,email,password,role) values('Admin01','Admin God','admin@gmail.com','1234','admin');
+insert into user (username,fullname,email,password,role) values('Admin','Admin Other','admin2@gmail.com','1234','admin');
+insert into user (username,fullname,email,password,role) values('chagta01','Oliver dep','chagta01@gmail.com','1234','user');
+insert into user (username,fullname,email,password,role) values('chagta02','KAYA OOP','chagta02@gmail.com','1234','user');
+
+
+INSERT INTO Jewelry (jewelry_id, name, typeid, material, price, stock, weight, description) VALUES
+('J001', 'Gold Ring Classic', '1001', 'Gold 18K', 12000.00, 10, 5.5, 'แหวนทอง 18K ดีไซน์คลาสสิก'),
+('J007', 'Diamond Ring Premium', '1001', 'Gold 18K with Diamond', 18000.00, 7, 6.2, 'แหวนเพชรระดับพรีเมียม'),
+('J013', 'Silver Ring Modern', '1001', 'Silver 925', 4500.00, 15, 4.8, 'แหวนเงินดีไซน์โมเดิร์น'),
+('J019', 'Platinum Ring Elite', '1001', 'Platinum', 35000.00, 3, 7.0, 'แหวนแพลตตินัมระดับเอลิท'),
+('J025', 'Rose Gold Ring Fashion', '1001', 'Rose Gold', 9500.00, 12, 5.2, 'แหวนโรสโกลด์ดีไซน์แฟชั่น'),
+('J002', 'Silver Necklace Elegant', '1002', 'Silver 925', 3500.00, 15, 12.0, 'สร้อยคอเงิน 925 ดีไซน์เรียบหรู'),
+('J008', 'Gold Necklace Royal', '1002', 'Gold 18K', 22000.00, 4, 15.5, 'สร้อยคอทอง 18K ดีไซน์รอยัล'),
+('J014', 'Diamond Necklace Luxury', '1002', 'Gold 18K with Diamond', 42000.00, 2, 18.0, 'สร้อยคอเพชรรุ่นลักซ์ชัวรี่'),
+('J020', 'Pearl Necklace Classic', '1002', 'Pearl & Gold', 15000.00, 8, 14.5, 'สร้อยคอไข่มุกคลาสสิก'),
+('J026', 'Choker Necklace Modern', '1002', 'Silver 925', 2800.00, 20, 8.0, 'สร้อยคอชอคเกอร์ดีไซน์ทันสมัย'),
+('J003', 'Diamond Bracelet', '1003', 'Gold 18K with Diamond', 25000.00, 5, 20.0, 'กำไลทองประดับเพชร'),
+('J009', 'Silver Bracelet Modern', '1003', 'Silver 925', 5000.00, 12, 18.0, 'กำไลเงินดีไซน์โมเดิร์น'),
+('J015', 'Gold Bangle Classic', '1003', 'Gold 18K', 18000.00, 6, 22.5, 'กำไลทองคำแท้ดีไซน์คลาสสิก'),
+('J021', 'Charm Bracelet Unique', '1003', 'Silver 925', 7500.00, 10, 16.8, 'กำไล charm ดีไซน์ยูนีค'),
+('J027', 'Tennis Bracelet Luxury', '1003', 'Gold 18K with Diamond', 55000.00, 2, 25.0, 'กำไลเทนนิสเพชรรุ่นลักซ์ชัวรี่'),
+('J004', 'Pearl Earrings', '1004', 'Pearl & Silver', 8000.00, 8, 4.0, 'ต่างหูมุกดีไซน์เรียบหรู'),
+('J010', 'Gold Earrings Luxury', '1004', 'Gold 18K', 12000.00, 9, 5.5, 'ต่างหูทองระดับลักซ์ชัวรี่'),
+('J016', 'Diamond Stud Earrings', '1004', 'Gold 18K with Diamond', 22000.00, 4, 3.8, 'ต่างหูเพชรแบบสตั๊ด'),
+('J022', 'Hoop Earrings Fashion', '1004', 'Silver 925', 3500.00, 15, 6.2, 'ต่างหูฮูปดีไซน์แฟชั่น'),
+('J028', 'Drop Earrings Elegant', '1004', 'Gold 18K', 16000.00, 7, 7.5, 'ต่างหูแบบดรอปดีไซน์เอลิแกนต์'),
+('J005', 'Gold Brooch', '1005', 'Gold 18K', 15000.00, 6, 10.0, 'เข็มกลัดทอง 18K ดีไซน์คลาสสิก'),
+('J011', 'Diamond Brooch Luxury', '1005', 'Gold 18K with Diamond', 32000.00, 3, 12.5, 'เข็มกลัดเพชรรุ่นลักซ์ชัวรี่'),
+('J017', 'Vintage Brooch Classic', '1005', 'Gold 18K', 18000.00, 4, 11.2, 'เข็มกลัดวินเทจคลาสสิก'),
+('J023', 'Flower Brooch Delicate', '1005', 'Silver 925', 6500.00, 8, 9.8, 'เข็มกลัดลายดอกไม้ดีไซน์บอบบาง'),
+('J029', 'Art Deco Brooch Unique', '1005', 'Gold 18K', 25000.00, 2, 13.5, 'เข็มกลัดอาร์ตเดโคดีไซน์ยูนีค'),
+('J006', 'Luxury Watch', '1006', 'Stainless Steel', 45000.00, 3, 60.0, 'นาฬิกาหรูสายสแตนเลส'),
+('J012', 'Gold Watch Premium', '1006', 'Gold 18K', 85000.00, 2, 55.0, 'นาฬิกาทองคำแท้ระดับพรีเมียม'),
+('J018', 'Diamond Watch Luxury', '1006', 'Gold 18K with Diamond', 120000.00, 1, 58.5, 'นาฬิกาเพชรรุ่นลักซ์ชัวรี่'),
+('J024', 'Sports Watch Modern', '1006', 'Stainless Steel', 28000.00, 8, 62.0, 'นาฬิกาสปอร์ตดีไซน์โมเดิร์น'),
+('J030', 'Classic Watch Timeless', '1006', 'Stainless Steel', 32000.00, 6, 56.8, 'นาฬิกาคลาสสิกไม่มีวันล้าสมัย');
+
+
+INSERT INTO Orders (order_id, username, order_date, status) VALUES
+('O001', 'chagta01', '2025-10-04 10:30:00', 'paid'),
+('O002', 'chagta02', '2025-10-04 11:00:00', 'paid');
+
+
+INSERT INTO OrderDetail (order_id, jewelry_id, quantity, price) VALUES
+('O001', 'J001', 1, 12000.00),
+('O001', 'J004', 2, 16000.00), 
+('O002', 'J002', 1, 3500.00),
+('O002', 'J006', 1, 45000.00);
